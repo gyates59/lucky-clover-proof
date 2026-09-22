@@ -71,7 +71,7 @@
     <div id="form" class="inner">
       <div class="kicker">Postcard approval &#183; Lucky Clover Pest Control</div>
       <h1>Approve your launch postcard</h1>
-      <p class="lead">Jared, here is the card, front and back. Look it over, confirm the offer, sign, and pay. The audience is built and the list is ready, so your approval here is what sends it to print.</p>
+      <p class="lead">Jared, here is the card, front and back. Look it over, confirm the offer, choose how you will pay, and sign. Your invoice follows by email, and the card goes to print when it is paid. The audience is built and the list is ready.</p>
 
       <h3><span class="n">1</span>The card</h3>
       <div class="proof"><img src="front.jpg" alt="Postcard front"><div class="cap">FRONT. The phone number and QR code are blank on purpose. Your Lucky Clover marketing line and web address drop in before print; they are ours to place and track, nothing for you to do.</div></div>
@@ -84,8 +84,11 @@
 
       <h3><span class="n">3</span>The launch drop</h3>
       <label class="choice sel" id="c-1000"><input type="radio" name="qty" value="1000" checked onchange="sel()"><span><b>1,000 cards</b><span>The launch drop you chose on the transfer page. Every in-market homeowner in your ZIPs this month, plus local realtors and commercial accounts. Design, print, addressing and postage included.</span></span><span class="price">$1,200</span></label>
-      <div class="total"><span class="lbl">DUE ON APPROVAL <span id="duewhat">&#183; 1,000 cards at $1.20</span></span><span class="amt" id="duenow">$1,200</span></div>
-      <div class="note">Your regular 250 cards a month are already part of your program and are not billed here. This is only the launch drop, at $1.20 a card as agreed.</div>
+      <label style="margin-top:14px">How you will pay</label>
+      <label class="choice sel" id="c-ach"><input type="radio" name="pay" value="ach" checked onchange="sel()"><span><b>Bank transfer (ACH)</b><span>Included, no processing fee.</span></span></label>
+      <label class="choice" id="c-card"><input type="radio" name="pay" value="card" onchange="sel()"><span><b>Credit card</b><span>Adds 3% processing.</span></span></label>
+      <div class="total"><span class="lbl">YOUR INVOICE <span id="duewhat">&#183; 1,000 cards at $1.20, by bank transfer</span></span><span class="amt" id="duenow">$1,200</span></div>
+      <div class="note">Your invoice arrives by email right after you approve, with a pay button for the method you chose. Your regular 250 cards a month are already part of your program and are not billed here. This is only the launch drop, at $1.20 a card as agreed.</div>
 
       <h3><span class="n">4</span>Anything to change?</h3>
       <textarea id="changes_text" rows="3" placeholder="Optional. A word, a color, a photo you want swapped in. Leave blank if it is good to go."></textarea>
@@ -98,21 +101,19 @@
         </div>
         <label>Type your full name as your signature <span class="req">*</span></label>
         <input type="text" id="sig" class="siginput" placeholder="Signature">
-        <div class="authbox"><input type="checkbox" id="auth"><span>I approve this postcard design and copy for print as shown above, with the offer wording and quantity I selected, and I authorize the launch drop charge at $1.20 per card. I understand the phone number and web address printed on the card are the Lucky Clover marketing line and tracked address provided by Rapid Removal IQ, and that the card goes to print once payment is received.</span></div>
+        <div class="authbox"><input type="checkbox" id="auth"><span>I approve this postcard design and copy for print as shown above, with the offer wording I selected, and I authorize the launch drop invoice of 1,000 cards at $1.20 per card, plus 3% processing if I chose to pay by credit card. I understand the phone number and web address printed on the card are the Lucky Clover marketing line and tracked address provided by Rapid Removal IQ, and that the card goes to print once the invoice is paid.</span></div>
       </div>
 
       <div class="err" id="err"></div>
-      <button class="submit" id="go" onclick="submitApproval()">Approve &amp; Continue to Payment</button>
+      <button class="submit" id="go" onclick="submitApproval()">Approve the Postcard</button>
       <button class="submit alt" onclick="sendChanges()">I need changes before I approve</button>
       <div class="terms">Rapid Removal IQ, a program of Groupserv Management LLC / Rapid IQ Group, Casey, IL. Questions: 217-335-4060.</div>
     </div>
 
     <div id="done">
       <div class="big">&#10003;</div>
-      <h2>Approved. One more click.</h2>
-      <p id="donetext">Pay for the launch drop below and the card goes to print. You will get a text from us when it drops.</p>
-      <p id="paywrap"></p>
-      <p style="font-size:13px">If the payment button is missing, the link is on its way to your email.</p>
+      <h2>Approved. Your invoice is on its way.</h2>
+      <p id="donetext">Watch your email for the invoice. Pay it from the button in that email and the card goes to print. You will get a text from us when it drops.</p>
     </div>
 
     <div id="changes">
@@ -129,19 +130,21 @@ const ENDPOINT = "https://pboxaamvtrgwnhgfccbv.supabase.co/functions/v1/proposal
 const TOKEN = "gsm-proposal-2026";
 const PROGRAM = "rriq-pest-proof";
 const CARD = 1.20;
-// Payment links by quantity. Greg creates these in GHL; empty = "link is on its way to your email".
-const PAY_LINKS = { "1000": "" };
+// RULE: no payment link on the page. The page records the payment method; the invoice goes out
+// separately from QuickBooks for the amount that method produces (ACH as-is, card +3%).
 const $ = id => document.getElementById(id);
 const val = id => ($(id).value || "").trim();
 function qty() { return document.querySelector('input[name=qty]:checked').value; }
 function offer() { return document.querySelector('input[name=offer]:checked').value; }
+function isCard() { return document.querySelector('input[name=pay]:checked').value === "card"; }
+function amount() { const base = Math.round(parseInt(qty(),10)*CARD); return isCard() ? Math.round(base*1.03) : base; }
 function sel() {
   $("c-1000").classList.add("sel");
   $("c-offer-yes").classList.toggle("sel", offer()==="as-shown"); $("c-offer-no").classList.toggle("sel", offer()==="change");
   $("offerbox").style.display = offer()==="change" ? "block" : "none";
-  const n = parseInt(qty(),10), amt = Math.round(n*CARD);
-  $("duenow").textContent = "$" + amt.toLocaleString();
-  $("duewhat").innerHTML = "&#183; " + n.toLocaleString() + " cards at $1.20";
+  $("c-ach").classList.toggle("sel", !isCard()); $("c-card").classList.toggle("sel", isCard());
+  $("duenow").textContent = "$" + amount().toLocaleString();
+  $("duewhat").innerHTML = "&#183; " + parseInt(qty(),10).toLocaleString() + " cards at $1.20, " + (isCard() ? "by card incl. 3%" : "by bank transfer");
 }
 sel();
 function showErr(m, el) { const e=$("err"); e.textContent=m; e.style.display="block"; (el||e).scrollIntoView({block:"center"}); }
@@ -150,13 +153,13 @@ async function post(body) {
   const j = await res.json(); if (!res.ok || !j.ok) throw new Error(j.error || "submit failed"); return j;
 }
 function common(kind) {
-  const n = parseInt(qty(),10), amt = Math.round(n*CARD);
+  const n = parseInt(qty(),10), amt = amount(), pay = isCard() ? "card" : "ach";
   const off = offer()==="change" ? ("CHANGE OFFER TO: " + val("offertext")) : "offer as shown ($49 first service)";
   return { token: TOKEN, program: PROGRAM, territory_name: "Lucky Clover Pest", plan: kind,
-    plan_label: (kind==="postcard-approved" ? "POSTCARD APPROVED: " : "POSTCARD CHANGES REQUESTED: ") + n + " cards $" + amt + " | " + off,
-    setup_fee: 0, due_now: kind==="postcard-approved" ? amt : 0, monthly_total: 0, payment_method: "card",
+    plan_label: (kind==="postcard-approved" ? "POSTCARD APPROVED: " : "POSTCARD CHANGES REQUESTED: ") + n + " cards, invoice $" + amt + " " + pay.toUpperCase() + " | " + off,
+    setup_fee: 0, due_now: kind==="postcard-approved" ? amt : 0, monthly_total: 0, payment_method: pay,
     admin: { name: val("sname"), email: val("semail") }, chairs: [],
-    zips_text: (kind==="postcard-approved" ? "APPROVED" : "CHANGES") + " | qty " + n + " | $" + amt + " | " + off + (val("changes_text") ? " | CHANGES: " + val("changes_text") : "") + " | pay link shown: " + (PAY_LINKS[qty()] ? "yes" : "NO (send by email)"),
+    zips_text: (kind==="postcard-approved" ? "APPROVED" : "CHANGES") + " | qty " + n + " | INVOICE FROM QBO: $" + amt + " " + pay.toUpperCase() + (isCard() ? " (incl. 3%)" : "") + " | " + off + (val("changes_text") ? " | CHANGES: " + val("changes_text") : ""),
     signer_name: val("sname"), signer_title: "Owner", signer_org: "Lucky Clover Pest & Lawn", signer_email: val("semail"),
     signature_typed: kind==="postcard-approved" ? val("sig") : (val("sname") || "changes requested"), authorized: true };
 }
@@ -169,12 +172,10 @@ async function submitApproval() {
   const btn=$("go"); btn.disabled=true; btn.textContent="Sending…";
   try {
     await post(common("postcard-approved"));
-    const link = PAY_LINKS[qty()], amt = Math.round(parseInt(qty(),10)*CARD);
     $("form").style.display="none"; $("done").style.display="block";
-    if (link) $("paywrap").innerHTML = '<a class="paybtn" href="'+link+'" target="_blank" rel="noopener">Pay $'+amt.toLocaleString()+' for '+parseInt(qty(),10).toLocaleString()+' cards</a>';
-    if (offer()==="change") $("donetext").textContent = "We have your new offer wording and will send the corrected card before it prints. Pay for the launch drop below so the print slot is held.";
+    $("donetext").textContent = "Watch your email for the invoice: $" + amount().toLocaleString() + (isCard() ? " by card" : " by bank transfer") + ". Pay it from the button in that email and the card goes to print." + (offer()==="change" ? " We have your new offer wording and will send the corrected card before it prints." : "") + " You will get a text from us when it drops.";
     window.scrollTo({top:0});
-  } catch(e) { btn.disabled=false; btn.textContent="Approve & Continue to Payment"; showErr("Something went wrong sending this. Please try again, or call 217-335-4060."); }
+  } catch(e) { btn.disabled=false; btn.textContent="Approve the Postcard"; showErr("Something went wrong sending this. Please try again, or call 217-335-4060."); }
 }
 async function sendChanges() {
   $("err").style.display="none";
