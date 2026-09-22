@@ -71,7 +71,7 @@
     <div id="form" class="inner">
       <div class="kicker">Postcard approval &#183; Lucky Clover Pest Control</div>
       <h1>Approve your launch postcard</h1>
-      <p class="lead">Jared, here is the card, front and back. Look it over, tell us the count you want mailed, sign, and pay. The audience is built and the list is ready, so your approval here is what sends it to print.</p>
+      <p class="lead">Jared, here is the card, front and back. Look it over, confirm the offer, sign, and pay. The audience is built and the list is ready, so your approval here is what sends it to print.</p>
 
       <h3><span class="n">1</span>The card</h3>
       <div class="proof"><img src="front.jpg" alt="Postcard front"><div class="cap">FRONT. The phone number and QR code are blank on purpose. Your Lucky Clover marketing line and web address drop in before print; they are ours to place and track, nothing for you to do.</div></div>
@@ -82,12 +82,10 @@
       <label class="choice" id="c-offer-no"><input type="radio" name="offer" value="change" onchange="sel()"><span><b>Change the offer wording</b><span>Type exactly what you want it to say below.</span></span></label>
       <div id="offerbox" style="display:none"><label>New offer wording</label><input type="text" id="offertext" placeholder="Exactly as it should print"></div>
 
-      <h3><span class="n">3</span>How many to mail</h3>
-      <label class="choice sel" id="c-1000"><input type="radio" name="qty" value="1000" checked onchange="sel()"><span><b>1,000 cards</b><span>The launch drop you chose on the transfer page. Every in-market homeowner in your ZIPs this month, plus local realtors and commercial accounts.</span></span><span class="price">$1,200</span></label>
-      <label class="choice" id="c-500"><input type="radio" name="qty" value="500" onchange="sel()"><span><b>500 cards</b><span>The strongest half of the list now; the rest rides with next month's 250.</span></span><span class="price">$600</span></label>
-      <label class="choice" id="c-250"><input type="radio" name="qty" value="250" onchange="sel()"><span><b>250 cards</b><span>Your regular monthly count, starting now. Lightest launch.</span></span><span class="price">$300</span></label>
-      <div class="total"><span class="lbl">DUE ON APPROVAL <span id="duewhat">&#183; 1,000 cards at $1.20, design, print, addressing and postage included</span></span><span class="amt" id="duenow">$1,200</span></div>
-      <div class="note">Your monthly 250 cards are already part of your program and are not billed here. This is only the extra launch drop, at $1.20 a card as agreed.</div>
+      <h3><span class="n">3</span>The launch drop</h3>
+      <label class="choice sel" id="c-1000"><input type="radio" name="qty" value="1000" checked onchange="sel()"><span><b>1,000 cards</b><span>The launch drop you chose on the transfer page. Every in-market homeowner in your ZIPs this month, plus local realtors and commercial accounts. Design, print, addressing and postage included.</span></span><span class="price">$1,200</span></label>
+      <div class="total"><span class="lbl">DUE ON APPROVAL <span id="duewhat">&#183; 1,000 cards at $1.20</span></span><span class="amt" id="duenow">$1,200</span></div>
+      <div class="note">Your regular 250 cards a month are already part of your program and are not billed here. This is only the launch drop, at $1.20 a card as agreed.</div>
 
       <h3><span class="n">4</span>Anything to change?</h3>
       <textarea id="changes_text" rows="3" placeholder="Optional. A word, a color, a photo you want swapped in. Leave blank if it is good to go."></textarea>
@@ -132,18 +130,18 @@ const TOKEN = "gsm-proposal-2026";
 const PROGRAM = "rriq-pest-proof";
 const CARD = 1.20;
 // Payment links by quantity. Greg creates these in GHL; empty = "link is on its way to your email".
-const PAY_LINKS = { "1000": "", "500": "", "250": "" };
+const PAY_LINKS = { "1000": "" };
 const $ = id => document.getElementById(id);
 const val = id => ($(id).value || "").trim();
 function qty() { return document.querySelector('input[name=qty]:checked').value; }
 function offer() { return document.querySelector('input[name=offer]:checked').value; }
 function sel() {
-  ["1000","500","250"].forEach(q => $("c-"+q).classList.toggle("sel", qty()===q));
+  $("c-1000").classList.add("sel");
   $("c-offer-yes").classList.toggle("sel", offer()==="as-shown"); $("c-offer-no").classList.toggle("sel", offer()==="change");
   $("offerbox").style.display = offer()==="change" ? "block" : "none";
   const n = parseInt(qty(),10), amt = Math.round(n*CARD);
   $("duenow").textContent = "$" + amt.toLocaleString();
-  $("duewhat").innerHTML = "&#183; " + n.toLocaleString() + " cards at $1.20, design, print, addressing and postage included";
+  $("duewhat").innerHTML = "&#183; " + n.toLocaleString() + " cards at $1.20";
 }
 sel();
 function showErr(m, el) { const e=$("err"); e.textContent=m; e.style.display="block"; (el||e).scrollIntoView({block:"center"}); }
