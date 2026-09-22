@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lucky Clover Pest &#8212; Postcard Approval</title>
+<style>
+  :root { --navy:#0D1B2A; --blue:#0066CC; --orange:#FF6600; --ink:#1A2330; --mut:#6C757D; --line:#E1E5EA; --wash:#F5F7FA; --good:#1F7A3D; --pink:#E2117A; --green:#1E8A3B; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Inter, "Segoe UI", system-ui, Arial, sans-serif; color: var(--ink); background: #EDF1F4; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 24px 16px 60px; }
+  .card { background: #fff; border-radius: 14px; box-shadow: 0 2px 14px rgba(13,27,42,.10); padding: 0 0 28px; overflow: hidden; }
+  .bar { background: var(--navy); color: #fff; padding: 16px 28px; display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  .bar .brand { font-weight: 800; letter-spacing: .04em; font-size: 20px; }
+  .bar .tag { color: var(--orange); font-style: italic; font-size: 13px; }
+  .bar .sub { width: 100%; font-size: 11px; color: #AFC0D0; letter-spacing: .04em; }
+  .inner { padding: 22px 28px 0; }
+  @media (max-width: 620px) { .inner { padding: 18px 16px 0; } .bar { padding: 14px 16px; } }
+  .kicker { font-size: 11px; letter-spacing: .14em; color: var(--blue); font-weight: 700; text-transform: uppercase; }
+  h1 { font-size: 24px; margin: 6px 0 8px; color: var(--navy); }
+  .lead { font-size: 14px; line-height: 1.55; }
+  h3 { font-size: 12px; color: var(--blue); letter-spacing: .08em; text-transform: uppercase; margin: 24px 0 10px; }
+  h3 .n { display: inline-block; background: var(--navy); color: #fff; border-radius: 6px; padding: 1px 7px; margin-right: 8px; font-size: 11px; }
+  .proof { border: 1.5px solid var(--line); border-radius: 12px; overflow: hidden; margin-bottom: 12px; background: #fff; }
+  .proof img { width: 100%; display: block; }
+  .proof .cap { font-size: 12px; color: var(--mut); padding: 8px 12px; background: var(--wash); }
+  .note { background: var(--wash); border-left: 4px solid var(--orange); padding: 12px 16px; font-size: 13px; line-height: 1.5; border-radius: 0 8px 8px 0; margin: 10px 0 4px; }
+  label { display: block; font-size: 12.5px; font-weight: 600; color: var(--navy); margin: 12px 0 4px; }
+  label .req { color: #B00020; }
+  input[type=text], input[type=email], textarea { width: 100%; padding: 9px 12px; border: 1.5px solid var(--line); border-radius: 8px; font-size: 14px; font-family: inherit; background: #FDFEFF; color: var(--ink); }
+  input:focus, textarea:focus { outline: 2px solid var(--blue); border-color: var(--blue); }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 18px; }
+  @media (max-width: 620px) { .row2 { grid-template-columns: 1fr; } }
+  .choice { display: flex; gap: 12px; align-items: flex-start; border: 1.5px solid var(--line); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; cursor: pointer; }
+  .choice input { width: 19px; height: 19px; margin-top: 2px; accent-color: var(--navy); flex: none; }
+  .choice b { font-size: 14px; color: var(--navy); display: block; }
+  .choice span { font-size: 12.5px; color: var(--mut); line-height: 1.4; }
+  .choice.sel { border-color: var(--blue); background: #F5FAFD; }
+  .choice .price { margin-left: auto; font-weight: 700; color: var(--navy); white-space: nowrap; font-size: 14px; }
+  .total { display: flex; justify-content: space-between; align-items: baseline; background: var(--navy); color: #fff; border-radius: 10px; padding: 14px 18px; margin-top: 14px; }
+  .total .lbl { font-size: 13px; letter-spacing: .04em; } .total .lbl span { font-weight: 400; color: #AFC0D0; }
+  .total .amt { font-size: 24px; font-weight: 800; color: var(--orange); }
+  .sigblock { background: var(--wash); border-radius: 10px; padding: 16px 18px; margin-top: 10px; }
+  .authbox { display: flex; gap: 10px; align-items: flex-start; margin-top: 12px; font-size: 12.5px; line-height: 1.5; }
+  .authbox input { width: 20px; height: 20px; accent-color: var(--navy); flex: none; margin-top: 1px; }
+  .siginput { font-family: "Segoe Script", "Brush Script MT", cursive; font-size: 20px !important; }
+  .submit { width: 100%; background: var(--orange); color: #fff; border: none; border-radius: 10px; padding: 15px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 18px; font-family: inherit; }
+  .submit:hover { background: #E05A00; } .submit:disabled { background: #8FA1B8; cursor: wait; }
+  .submit.alt { background: #fff; color: var(--navy); border: 1.5px solid var(--line); margin-top: 10px; font-weight: 600; }
+  .submit.alt:hover { background: var(--wash); }
+  .err { color: #B00020; font-size: 13px; margin-top: 10px; display: none; }
+  .terms { font-size: 11px; color: var(--mut); line-height: 1.5; margin-top: 16px; }
+  #done, #changes { display: none; text-align: center; padding: 40px 20px; }
+  .big { font-size: 46px; color: var(--good); }
+  #done h2, #changes h2 { color: var(--navy); margin: 10px 0 8px; }
+  #done p, #changes p { color: var(--mut); font-size: 14.5px; line-height: 1.6; max-width: 540px; margin: 0 auto 8px; }
+  .paybtn { display: inline-block; background: var(--orange); color: #fff; text-decoration: none; font-weight: 700; padding: 14px 26px; border-radius: 10px; margin: 14px 0 6px; font-size: 16px; }
+  .foot { text-align: center; font-size: 11px; color: var(--mut); margin-top: 18px; letter-spacing: .04em; line-height: 1.6; }
+  .foot b { color: var(--navy); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <div class="bar">
+      <div class="brand">RAPID REMOVAL IQ</div>
+      <div class="tag">WE MAKE YOUR PHONE RING.</div>
+      <div class="sub">Lucky Clover Pest Control &#183; launch postcard &#183; 217-335-4060</div>
+    </div>
+
+    <div id="form" class="inner">
+      <div class="kicker">Postcard approval &#183; Lucky Clover Pest Control</div>
+      <h1>Approve your launch postcard</h1>
+      <p class="lead">Jared, here is the card, front and back. Look it over, tell us the count you want mailed, sign, and pay. The audience is built and the list is ready, so your approval here is what sends it to print.</p>
+
+      <h3><span class="n">1</span>The card</h3>
+      <div class="proof"><img src="front.jpg" alt="Postcard front"><div class="cap">FRONT. The phone number and QR code are blank on purpose. Your Lucky Clover marketing line and web address drop in before print; they are ours to place and track, nothing for you to do.</div></div>
+      <div class="proof"><img src="back.jpg" alt="Postcard back"><div class="cap">BACK. Return address and license number as you gave them to us. The white panel on the right is the mailing side.</div></div>
+
+      <h3><span class="n">2</span>Your offer on the card</h3>
+      <label class="choice sel" id="c-offer-yes"><input type="radio" name="offer" value="as-shown" checked onchange="sel()"><span><b>Keep it as shown</b><span>"First service $49 for new customers. Free inspection first, always."</span></span></label>
+      <label class="choice" id="c-offer-no"><input type="radio" name="offer" value="change" onchange="sel()"><span><b>Change the offer wording</b><span>Type exactly what you want it to say below.</span></span></label>
+      <div id="offerbox" style="display:none"><label>New offer wording</label><input type="text" id="offertext" placeholder="Exactly as it should print"></div>
+
+      <h3><span class="n">3</span>How many to mail</h3>
+      <label class="choice sel" id="c-1000"><input type="radio" name="qty" value="1000" checked onchange="sel()"><span><b>1,000 cards</b><span>The launch drop you chose on the transfer page. Every in-market homeowner in your ZIPs this month, plus local realtors and commercial accounts.</span></span><span class="price">$1,200</span></label>
+      <label class="choice" id="c-500"><input type="radio" name="qty" value="500" onchange="sel()"><span><b>500 cards</b><span>The strongest half of the list now; the rest rides with next month's 250.</span></span><span class="price">$600</span></label>
+      <label class="choice" id="c-250"><input type="radio" name="qty" value="250" onchange="sel()"><span><b>250 cards</b><span>Your regular monthly count, starting now. Lightest launch.</span></span><span class="price">$300</span></label>
+      <div class="total"><span class="lbl">DUE ON APPROVAL <span id="duewhat">&#183; 1,000 cards at $1.20, design, print, addressing and postage included</span></span><span class="amt" id="duenow">$1,200</span></div>
+      <div class="note">Your monthly 250 cards are already part of your program and are not billed here. This is only the extra launch drop, at $1.20 a card as agreed.</div>
+
+      <h3><span class="n">4</span>Anything to change?</h3>
+      <textarea id="changes_text" rows="3" placeholder="Optional. A word, a color, a photo you want swapped in. Leave blank if it is good to go."></textarea>
+
+      <h3><span class="n">5</span>Approval</h3>
+      <div class="sigblock">
+        <div class="row2">
+          <div><label>Your name <span class="req">*</span></label><input type="text" id="sname" value="Jared Lajaunie"></div>
+          <div><label>Email <span class="req">*</span></label><input type="email" id="semail" value="luckycloverpest@gmail.com"></div>
+        </div>
+        <label>Type your full name as your signature <span class="req">*</span></label>
+        <input type="text" id="sig" class="siginput" placeholder="Signature">
+        <div class="authbox"><input type="checkbox" id="auth"><span>I approve this postcard design and copy for print as shown above, with the offer wording and quantity I selected, and I authorize the launch drop charge at $1.20 per card. I understand the phone number and web address printed on the card are the Lucky Clover marketing line and tracked address provided by Rapid Removal IQ, and that the card goes to print once payment is received.</span></div>
+      </div>
+
+      <div class="err" id="err"></div>
+      <button class="submit" id="go" onclick="submitApproval()">Approve &amp; Continue to Payment</button>
+      <button class="submit alt" onclick="sendChanges()">I need changes before I approve</button>
+      <div class="terms">Rapid Removal IQ, a program of Groupserv Management LLC / Rapid IQ Group, Casey, IL. Questions: 217-335-4060.</div>
+    </div>
+
+    <div id="done">
+      <div class="big">&#10003;</div>
+      <h2>Approved. One more click.</h2>
+      <p id="donetext">Pay for the launch drop below and the card goes to print. You will get a text from us when it drops.</p>
+      <p id="paywrap"></p>
+      <p style="font-size:13px">If the payment button is missing, the link is on its way to your email.</p>
+    </div>
+
+    <div id="changes">
+      <div class="big" style="color:var(--orange)">&#10003;</div>
+      <h2>Got it. We will make the changes.</h2>
+      <p>Greg will send you a revised card. Nothing prints until you approve it.</p>
+    </div>
+  </div>
+  <div class="foot"><b>RAPID REMOVAL IQ</b> &#183; One operator per market.<br>RapidRemovalIQ.com &#183; 217-335-4060</div>
+</div>
+
+<script>
+const ENDPOINT = "https://pboxaamvtrgwnhgfccbv.supabase.co/functions/v1/proposal-submit";
+const TOKEN = "gsm-proposal-2026";
+const PROGRAM = "rriq-pest-proof";
+const CARD = 1.20;
+// Payment links by quantity. Greg creates these in GHL; empty = "link is on its way to your email".
+const PAY_LINKS = { "1000": "", "500": "", "250": "" };
+const $ = id => document.getElementById(id);
+const val = id => ($(id).value || "").trim();
+function qty() { return document.querySelector('input[name=qty]:checked').value; }
+function offer() { return document.querySelector('input[name=offer]:checked').value; }
+function sel() {
+  ["1000","500","250"].forEach(q => $("c-"+q).classList.toggle("sel", qty()===q));
+  $("c-offer-yes").classList.toggle("sel", offer()==="as-shown"); $("c-offer-no").classList.toggle("sel", offer()==="change");
+  $("offerbox").style.display = offer()==="change" ? "block" : "none";
+  const n = parseInt(qty(),10), amt = Math.round(n*CARD);
+  $("duenow").textContent = "$" + amt.toLocaleString();
+  $("duewhat").innerHTML = "&#183; " + n.toLocaleString() + " cards at $1.20, design, print, addressing and postage included";
+}
+sel();
+function showErr(m, el) { const e=$("err"); e.textContent=m; e.style.display="block"; (el||e).scrollIntoView({block:"center"}); }
+async function post(body) {
+  const res = await fetch(ENDPOINT, { method:"POST", headers:{"content-type":"application/json"}, body: JSON.stringify(body) });
+  const j = await res.json(); if (!res.ok || !j.ok) throw new Error(j.error || "submit failed"); return j;
+}
+function common(kind) {
+  const n = parseInt(qty(),10), amt = Math.round(n*CARD);
+  const off = offer()==="change" ? ("CHANGE OFFER TO: " + val("offertext")) : "offer as shown ($49 first service)";
+  return { token: TOKEN, program: PROGRAM, territory_name: "Lucky Clover Pest", plan: kind,
+    plan_label: (kind==="postcard-approved" ? "POSTCARD APPROVED: " : "POSTCARD CHANGES REQUESTED: ") + n + " cards $" + amt + " | " + off,
+    setup_fee: 0, due_now: kind==="postcard-approved" ? amt : 0, monthly_total: 0, payment_method: "card",
+    admin: { name: val("sname"), email: val("semail") }, chairs: [],
+    zips_text: (kind==="postcard-approved" ? "APPROVED" : "CHANGES") + " | qty " + n + " | $" + amt + " | " + off + (val("changes_text") ? " | CHANGES: " + val("changes_text") : "") + " | pay link shown: " + (PAY_LINKS[qty()] ? "yes" : "NO (send by email)"),
+    signer_name: val("sname"), signer_title: "Owner", signer_org: "Lucky Clover Pest & Lawn", signer_email: val("semail"),
+    signature_typed: kind==="postcard-approved" ? val("sig") : (val("sname") || "changes requested"), authorized: true };
+}
+async function submitApproval() {
+  $("err").style.display="none";
+  if (offer()==="change" && !val("offertext")) return showErr("Type the new offer wording, or choose Keep it as shown.", $("offertext"));
+  if (!val("sname") || !val("semail")) return showErr("Please enter your name and email.", $("sname"));
+  if (!val("sig")) return showErr("Please type your name as your signature.", $("sig"));
+  if (!$("auth").checked) return showErr("Please check the approval box.", $("auth"));
+  const btn=$("go"); btn.disabled=true; btn.textContent="Sending…";
+  try {
+    await post(common("postcard-approved"));
+    const link = PAY_LINKS[qty()], amt = Math.round(parseInt(qty(),10)*CARD);
+    $("form").style.display="none"; $("done").style.display="block";
+    if (link) $("paywrap").innerHTML = '<a class="paybtn" href="'+link+'" target="_blank" rel="noopener">Pay $'+amt.toLocaleString()+' for '+parseInt(qty(),10).toLocaleString()+' cards</a>';
+    if (offer()==="change") $("donetext").textContent = "We have your new offer wording and will send the corrected card before it prints. Pay for the launch drop below so the print slot is held.";
+    window.scrollTo({top:0});
+  } catch(e) { btn.disabled=false; btn.textContent="Approve & Continue to Payment"; showErr("Something went wrong sending this. Please try again, or call 217-335-4060."); }
+}
+async function sendChanges() {
+  $("err").style.display="none";
+  if (!val("changes_text") && offer()!=="change") return showErr("Tell us what to change in the box above.", $("changes_text"));
+  if (!val("sname") || !val("semail")) return showErr("Please enter your name and email.", $("sname"));
+  try { await post(common("postcard-changes")); $("form").style.display="none"; $("changes").style.display="block"; window.scrollTo({top:0}); }
+  catch(e) { showErr("Something went wrong sending this. Please try again, or call 217-335-4060."); }
+}
+</script>
+</body>
+</html>
